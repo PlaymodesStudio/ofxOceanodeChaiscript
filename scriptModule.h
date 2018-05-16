@@ -22,9 +22,7 @@ public:
     virtual void presetSave(ofJson &json) override{
         ofSerialize(json, filename);
     };
-    virtual void presetRecallBeforeSettingParameters(ofJson &json) override{
-        ofDeserialize(json, filename);
-    };
+    virtual void presetRecallBeforeSettingParameters(ofJson &json) override;
     
     std::vector<float> to_vector_float(const std::vector<chaiscript::Boxed_Value> &vs) {
         std::vector<float> vi;
@@ -129,6 +127,7 @@ public:
     
 private:
     void parametersListener(ofAbstractParameter &param);
+    void loadFile();
     
     ofParameter<string> filename;
     std::time_t fileLastChanged;

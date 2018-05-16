@@ -55,24 +55,27 @@ void scriptModule::update(ofEventArgs &a){
     if(hasValidFile){
         auto currentLocale = std::filesystem::last_write_time(ofToDataPath("Scripts/" + filename.get()));
         if(currentLocale != fileLastChanged){
-            //parameters->clear();
-            chai.set_state(chaiInitState);
-            try{
-                chai.eval_file(ofToDataPath("Scripts/" + filename.get()));
-            }catch (std::exception &e){
-                ofLog() << e.what();
-            }
-            try{
-                listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
-            }catch (std::exception &e){
-                ofLog() << e.what();
-            }
-            updateParameters();
-            ofNotifyEvent(parameterGroupChanged);
+            loadFile();
             fileLastChanged = currentLocale;
             ofLog() <<"File changed  " <<  ofGetTimestampString();
         }
     }
+}
+
+void scriptModule::loadFile(){
+    chai.set_state(chaiInitState);
+    try{
+        chai.eval_file(ofToDataPath("Scripts/" + filename.get()));
+    }catch (std::exception &e){
+        ofLog() << e.what();
+    }
+    try{
+        listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
+    }catch (std::exception &e){
+        ofLog() << e.what();
+    }
+    updateParameters();
+    ofNotifyEvent(parameterGroupChanged);
 }
 
 //TODO: Have to listen to void parameters separately
@@ -99,4 +102,12 @@ void scriptModule::parametersListener(ofAbstractParameter &param){
         }
     }
 }
+
+void scriptModule::presetRecallBeforeSettingParameters(ofJson &json){
+    string oldFile = filename;
+    ofDeserialize(json, filename);
+    if(filename.get() != oldFile){
+        loadFile();
+    }
+};
 
