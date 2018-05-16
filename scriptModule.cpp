@@ -12,6 +12,12 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
     hasValidFile = false;
     fileDialogFilename = "";
     
+    ofDirectory dir;
+    dir.open("Scripts");
+    if(!dir.exists()){
+        dir.createDirectory("Scripts");
+    }
+    
     listeners.push(parameters->parameterChangedE().newListener(this, &scriptModule::parametersListener));
     
     chai.add(chaiscript::fun(&scriptModule::addFloatParameter), "addFloatParameter");
