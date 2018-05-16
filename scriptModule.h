@@ -140,6 +140,7 @@ private:
     string lastChangedParameterName;
     
     bool hasValidFile;
+    string fileDialogFilename;
     
     ofParameterGroup toCreateParameters;
     

@@ -10,8 +10,7 @@
 scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
     parameters->add(filename.set("Filename", ""));
     hasValidFile = false;
-    //filename = "button_gate.chai";
-    //fileLastChanged = std::filesystem::last_write_time(ofToDataPath(filename));
+    fileDialogFilename = "";
     
     listeners.push(parameters->parameterChangedE().newListener(this, &scriptModule::parametersListener));
     
@@ -47,13 +46,19 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
 
 
 void scriptModule::update(ofEventArgs &a){
+    if(fileDialogFilename != ""){
+        filename = fileDialogFilename;
+        fileDialogFilename = "";
+        ofFile file;;
+        hasValidFile = file.doesFileExist(ofToDataPath("Scripts/" + filename.get()));
+    }
     if(hasValidFile){
-        auto currentLocale = std::filesystem::last_write_time(ofToDataPath("scripts/" + filename.get()));
+        auto currentLocale = std::filesystem::last_write_time(ofToDataPath("Scripts/" + filename.get()));
         if(currentLocale != fileLastChanged){
             //parameters->clear();
             chai.set_state(chaiInitState);
             try{
-                chai.eval_file(ofToDataPath("scripts/" + filename.get()));
+                chai.eval_file(ofToDataPath("Scripts/" + filename.get()));
             }catch (std::exception &e){
                 ofLog() << e.what();
             }
@@ -73,8 +78,16 @@ void scriptModule::update(ofEventArgs &a){
 //TODO: Have to listen to void parameters separately
 void scriptModule::parametersListener(ofAbstractParameter &param){
     if(param.getName() == filename.getName()){
-        ofFile file;;
-        hasValidFile = file.doesFileExist(ofToDataPath("scripts/" + filename.get()));
+        if(filename.get() == "open"){
+            auto result = ofSystemLoadDialog("Select .chai file", false, ofToDataPath("Scripts"));
+            string receivedFilename = result.fileName;
+            if(ofStringTimesInString(receivedFilename, ".chai") == 1){
+                fileDialogFilename = receivedFilename;
+            }
+        }else{
+            ofFile file;;
+            hasValidFile = file.doesFileExist(ofToDataPath("Scripts/" + filename.get()));
+        }
     }
     else{
         lastChangedParameterName = param.getName();
