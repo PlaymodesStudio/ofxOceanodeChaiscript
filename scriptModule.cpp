@@ -9,6 +9,7 @@
 
 scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
     parameters->add(filename.set("Filename", ""));
+    hasValidFile = false;
     //filename = "button_gate.chai";
     //fileLastChanged = std::filesystem::last_write_time(ofToDataPath(filename));
     
@@ -41,53 +42,48 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
         }));
     chai.add_global(chaiscript::var(this), "this");
     
-    
     chaiInitState = chai.get_state();
-    try{
-        chai.eval_file(ofToDataPath(filename.get()));
-    }catch (std::exception &e){
-        ofLog() << e.what();
-    }
-    try{
-        listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
-    }catch (std::exception &e){
-        ofLog() << e.what();
-    }
-    updateParameters();
 }
 
 
 void scriptModule::update(ofEventArgs &a){
-    
-    auto currentLocale = std::filesystem::last_write_time(ofToDataPath(filename.get()));
-    if(currentLocale != fileLastChanged){
-        //parameters->clear();
-        chai.set_state(chaiInitState);
-        try{
-            chai.eval_file(ofToDataPath(filename.get()));
-        }catch (std::exception &e){
-            ofLog() << e.what();
+    if(hasValidFile){
+        auto currentLocale = std::filesystem::last_write_time(ofToDataPath("scripts/" + filename.get()));
+        if(currentLocale != fileLastChanged){
+            //parameters->clear();
+            chai.set_state(chaiInitState);
+            try{
+                chai.eval_file(ofToDataPath("scripts/" + filename.get()));
+            }catch (std::exception &e){
+                ofLog() << e.what();
+            }
+            try{
+                listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
+            }catch (std::exception &e){
+                ofLog() << e.what();
+            }
+            updateParameters();
+            ofNotifyEvent(parameterGroupChanged);
+            fileLastChanged = currentLocale;
+            ofLog() <<"File changed  " <<  ofGetTimestampString();
         }
-        try{
-            listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
-        }catch (std::exception &e){
-            ofLog() << e.what();
-        }
-        updateParameters();
-        ofNotifyEvent(parameterGroupChanged);
-        fileLastChanged = currentLocale;
-        ofLog() <<"File changed  " <<  ofGetTimestampString();
     }
 }
 
 //TODO: Have to listen to void parameters separately
 void scriptModule::parametersListener(ofAbstractParameter &param){
-    lastChangedParameterName = param.getName();
-    try{
-        listenerFunc();
+    if(param.getName() == filename.getName()){
+        ofFile file;;
+        hasValidFile = file.doesFileExist(ofToDataPath("scripts/" + filename.get()));
     }
-    catch (std::exception &e){
-        ofLog() << e.what();
+    else{
+        lastChangedParameterName = param.getName();
+        try{
+            listenerFunc();
+        }
+        catch (std::exception &e){
+            ofLog() << e.what();
+        }
     }
 }
 

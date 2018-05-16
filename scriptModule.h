@@ -139,6 +139,8 @@ private:
     std::function<bool()> listenerFunc;
     string lastChangedParameterName;
     
+    bool hasValidFile;
+    
     ofParameterGroup toCreateParameters;
     
     ofEventListeners listeners;
