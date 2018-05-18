@@ -102,23 +102,28 @@ public:
     
     //Setters
     void setFloatParameter(string name, float val){
-        parameters->get(name).cast<float>().set(val);
+        if(parameters->contains(name))
+            parameters->get(name).cast<float>().set(val);
     }
     
     void setIntParameter(string name, int val){
-        parameters->get(name).cast<int>().set(val);
+        if(parameters->contains(name))
+            parameters->get(name).cast<int>().set(val);
     }
     
     void setBoolParameter(string name, bool val){
-        parameters->get(name).cast<bool>().set(val);
+        if(parameters->contains(name))
+            parameters->get(name).cast<bool>().set(val);
     }
     
     void setVoidParameter(string name){
-        parameters->get(name).cast<void>().trigger();
+        if(parameters->contains(name))
+            parameters->get(name).cast<void>().trigger();
     }
     
     void setVectorFloatParameter(string name, vector<float> val){
-        parameters->get(name).cast<vector<float>>().set(val);
+        if(parameters->contains(name))
+            parameters->get(name).cast<vector<float>>().set(val);
     }
     
     string getLastChangedParameterName(){
