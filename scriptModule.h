@@ -72,6 +72,7 @@ public:
         }
         for(int i = 0; i < parametersNames.size(); i++){
             if(parametersNames[i] != "Filename" && !toCreateParameters.contains(parametersNames[i])){
+                ofNotifyEvent(disconnectConnectionsForParameter, parametersNames[i]);
                 parameters->remove(parametersNames[i]);
             }
         }
