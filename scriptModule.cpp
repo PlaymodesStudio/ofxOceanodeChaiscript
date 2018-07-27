@@ -80,6 +80,11 @@ void scriptModule::loadFile(){
     }catch (std::exception &e){
         ofLog() << e.what();
     }
+    try{
+        presetLoad = chai.eval<std::function<bool()>>("presetLoad");
+    }catch (std::exception &e){
+        ofLog() << e.what();
+    }
     updateParameters();
     ofNotifyEvent(parameterGroupChanged);
 }
@@ -114,6 +119,15 @@ void scriptModule::presetRecallBeforeSettingParameters(ofJson &json){
     ofDeserialize(json, filename);
     if(filename.get() != oldFile){
         loadFile();
+    }
+};
+
+void scriptModule::presetHasLoaded(){
+    try{
+        presetLoad();
+    }
+    catch (std::exception &e){
+        ofLog() << e.what();
     }
 };
 

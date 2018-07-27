@@ -23,6 +23,7 @@ public:
         ofSerialize(json, filename);
     };
     virtual void presetRecallBeforeSettingParameters(ofJson &json) override;
+    virtual void presetHasLoaded() override;
     
     std::vector<float> to_vector_float(const std::vector<chaiscript::Boxed_Value> &vs) {
         std::vector<float> vi;
@@ -142,6 +143,7 @@ private:
     chaiscript::ChaiScript::State chaiInitState;
     
     std::function<bool()> listenerFunc;
+    std::function<bool()> presetLoad;
     string lastChangedParameterName;
     
     bool hasValidFile;
