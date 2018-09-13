@@ -8,7 +8,7 @@
 #include "scriptModule.h"
 
 scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
-    parameters->add(filename.set("Filename", ""));
+    addParameterToGroupAndInfo(filename.set("Filename", "")).isSavePreset = false;
     hasValidFile = false;
     fileDialogFilename = "";
     
