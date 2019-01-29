@@ -55,7 +55,7 @@ void scriptModule::update(ofEventArgs &a){
     if(fileDialogFilename != ""){
         filename = fileDialogFilename;
         fileDialogFilename = "";
-        ofFile file;;
+        ofFile file;
         hasValidFile = file.doesFileExist(ofToDataPath("Scripts/" + filename.get()));
     }
     if(hasValidFile){
@@ -95,9 +95,8 @@ void scriptModule::parametersListener(ofAbstractParameter &param){
         if(filename.get() == "open"){
             auto result = ofSystemLoadDialog("Select .chai file", false, ofToDataPath("Scripts"));
             string receivedFilename = result.fileName;
-            if(ofStringTimesInString(receivedFilename, ".chai") == 1){
-                fileDialogFilename = receivedFilename;
-            }
+            fileDialogFilename = receivedFilename;
+            hasValidFile = false;
         }else{
             ofFile file;;
             hasValidFile = file.doesFileExist(ofToDataPath("Scripts/" + filename.get()));
