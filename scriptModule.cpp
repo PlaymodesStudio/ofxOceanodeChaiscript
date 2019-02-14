@@ -113,7 +113,7 @@ void scriptModule::parametersListener(ofAbstractParameter &param){
     }
 }
 
-void scriptModule::presetRecallBeforeSettingParameters(ofJson &json){
+void scriptModule::loadBeforeConnections(ofJson &json){
     string oldFile = filename;
     ofDeserialize(json, filename);
     if(filename.get() != oldFile){
