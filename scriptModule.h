@@ -22,7 +22,7 @@ public:
     virtual void presetSave(ofJson &json) override{
         ofSerialize(json, filename);
     };
-    virtual void presetRecallBeforeSettingParameters(ofJson &json) override;
+    virtual void loadBeforeConnections(ofJson &json) override;
     virtual void presetHasLoaded() override;
     
     std::vector<float> to_vector_float(const std::vector<chaiscript::Boxed_Value> &vs) {
