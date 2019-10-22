@@ -78,8 +78,21 @@ public:
             }
         }
         for(int i = 0; i < toCreateParameters.size(); i++){
-            if(!parameters->contains(toCreateParameters.get(i).getName())){
-               parameters->add(toCreateParameters.get(i));
+            auto &param = toCreateParameters.get(i);
+            if(!parameters->contains(param.getName())){
+                parameters->add(param);
+                if(param.type() == typeid(ofParameter<void>).name()){
+                    string paramName = param.getName();
+                    listeners.push(param.cast<void>().newListener([this, paramName](){
+                        lastChangedParameterName = paramName;
+                        try{
+                            listenerFunc();
+                        }
+                        catch (std::exception &e){
+                            ofLog() << e.what();
+                        }
+                    }));
+                }
             }
         }
         toCreateParameters.clear();

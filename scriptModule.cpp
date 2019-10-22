@@ -89,7 +89,6 @@ void scriptModule::loadFile(){
     ofNotifyEvent(parameterGroupChanged);
 }
 
-//TODO: Have to listen to void parameters separately
 void scriptModule::parametersListener(ofAbstractParameter &param){
     if(param.getName() == filename.getName()){
         if(filename.get() == "open"){
