@@ -72,11 +72,34 @@ public:
             parametersNames.push_back(parameters->get(i).getEscapedName());
         }
         for(int i = 0; i < parametersNames.size(); i++){
-            if(parametersNames[i] != "Filename" && !toCreateParameters.contains(parametersNames[i])){
+            bool paramHasToRemove = true;
+            if(parametersNames[i] == "Filename") paramHasToRemove = false;
+            else if(toCreateParameters.contains(parametersNames[i])){
+                paramHasToRemove = false;
+                if(parameters->get(parametersNames[i]).type() != toCreateParameters.get(parametersNames[i]).type()){
+                    paramHasToRemove = true;
+                }
+                else if(parameters->get(parametersNames[i]).type() == typeid(ofParameter<float>).name()){
+                    auto &alreadyParam = parameters->getFloat(parametersNames[i]);
+                    auto &toCreateParam = toCreateParameters.getFloat(parametersNames[i]);
+                    if(alreadyParam.getMin() != toCreateParam.getMin() || alreadyParam.getMax() != toCreateParam.getMax()){
+                        paramHasToRemove = true;
+                    }
+                }
+                else if(parameters->get(parametersNames[i]).type() == typeid(ofParameter<int>).name()){
+                    auto &alreadyParam = parameters->getInt(parametersNames[i]);
+                    auto &toCreateParam = toCreateParameters.getInt(parametersNames[i]);
+                    if(alreadyParam.getMin() != toCreateParam.getMin() || alreadyParam.getMax() != toCreateParam.getMax()){
+                        paramHasToRemove = true;
+                    }
+                }
+            }
+            if(paramHasToRemove){
                 ofNotifyEvent(disconnectConnectionsForParameter, parametersNames[i]);
                 parameters->remove(parametersNames[i]);
             }
         }
+        parameterGroupChanged.notify();
         for(int i = 0; i < toCreateParameters.size(); i++){
             auto &param = toCreateParameters.get(i);
             if(!parameters->contains(param.getName())){
