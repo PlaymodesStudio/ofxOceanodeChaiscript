@@ -11,6 +11,7 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
     addParameterToGroupAndInfo(filename.set("Filename", "")).isSavePreset = false;
     hasValidFile = false;
     fileDialogFilename = "";
+    color = ofColor::white;
     
     ofDirectory dir;
     dir.open("Scripts");
