@@ -8,7 +8,7 @@
 #include "scriptModule.h"
 
 scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
-    addParameterToGroupAndInfo(filename.set("Filename", "")).isSavePreset = false;
+    addParameter(filename.set("Filename", ""), ofxOceanodeParameterFlags_DisableSavePreset);
     hasValidFile = false;
     fileDialogFilename = "";
     color = ofColor::white;
@@ -19,7 +19,7 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
         dir.createDirectory("Scripts");
     }
     
-    listeners.push(parameters->parameterChangedE().newListener(this, &scriptModule::parametersListener));
+    listeners.push(getParameterGroup().parameterChangedE().newListener(this, &scriptModule::parametersListener));
     
     chai.add(chaiscript::fun(&scriptModule::addFloatParameter), "addFloatParameter");
     chai.add(chaiscript::fun(&scriptModule::addIntParameter), "addIntParameter");
