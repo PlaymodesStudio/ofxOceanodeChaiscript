@@ -7,8 +7,8 @@
 
 #include "scriptModule.h"
 
-scriptModule::scriptModule() : ofxOceanodeNodeModel("Script Module"){
-    addParameter(filename.set("Filename", ""), ofxOceanodeParameterFlags_DisableSavePreset);
+scriptModule::scriptModule() : ofxOceanodeNodeModel("Chai Scripting"){
+    addParameter(filename.set("File", ""), ofxOceanodeParameterFlags_DisableSavePreset);
     hasValidFile = false;
     fileDialogFilename = "";
     color = ofColor::white;
