@@ -6,6 +6,7 @@
 //
 
 #include "scriptModule.h"
+#include "math.hpp"
 
 scriptModule::scriptModule() : ofxOceanodeNodeModel("Chai Scripting"){
     addParameter(filename.set("File", ""), ofxOceanodeParameterFlags_DisableSavePreset);
@@ -42,6 +43,7 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Chai Scripting"){
     
     chai.add(chaiscript::user_type<scriptModule>(), "scriptModule");
     chai.add(chaiscript::bootstrap::standard_library::vector_type<vector<float>>("FloatVector"));
+    chai.add(chaiscript::extras::math::bootstrap());
     chai.add(chaiscript::type_conversion<std::vector<chaiscript::Boxed_Value>, std::vector<float>>(
         [&](const std::vector<chaiscript::Boxed_Value> &t_bvs) {
             return to_vector_float(t_bvs);
