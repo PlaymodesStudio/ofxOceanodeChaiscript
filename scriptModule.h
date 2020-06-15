@@ -73,39 +73,61 @@ public:
         }
         for(int i = 0; i < parametersNames.size(); i++){
             bool paramHasToRemove = true;
-            if(parametersNames[i] == "Filename") paramHasToRemove = false;
+            if(parametersNames[i] == "File") paramHasToRemove = false;
             else if(toCreateParameters.contains(parametersNames[i])){
                 paramHasToRemove = false;
-                if(getParameterGroup().get(parametersNames[i]).type() != toCreateParameters.get(parametersNames[i]).type()){
+                if(getParameterGroup().get(parametersNames[i]).valueType() != toCreateParameters.get(parametersNames[i]).valueType()){
                     paramHasToRemove = true;
                 }
-                else if(getParameterGroup().get(parametersNames[i]).type() == typeid(ofParameter<float>).name()){
-                    auto &alreadyParam = getParameterGroup().getFloat(parametersNames[i]);
+                else if(getParameterGroup().get(parametersNames[i]).valueType() == typeid(float).name()){
+                    auto &alreadyParam = getParameter<float>(parametersNames[i]);
                     auto &toCreateParam = toCreateParameters.getFloat(parametersNames[i]);
                     if(alreadyParam.getMin() != toCreateParam.getMin() || alreadyParam.getMax() != toCreateParam.getMax()){
-                        paramHasToRemove = true;
+                        alreadyParam.setMin(toCreateParam.getMin());
+                        alreadyParam.setMax(toCreateParam.getMax());
                     }
                 }
-                else if(getParameterGroup().get(parametersNames[i]).type() == typeid(ofParameter<int>).name()){
-                    auto &alreadyParam = getParameterGroup().getInt(parametersNames[i]);
+                else if(getParameterGroup().get(parametersNames[i]).valueType() == typeid(int).name()){
+                    auto &alreadyParam = getParameter<int>(parametersNames[i]);
                     auto &toCreateParam = toCreateParameters.getInt(parametersNames[i]);
                     if(alreadyParam.getMin() != toCreateParam.getMin() || alreadyParam.getMax() != toCreateParam.getMax()){
-                        paramHasToRemove = true;
+                        alreadyParam.setMin(toCreateParam.getMin());
+                        alreadyParam.setMax(toCreateParam.getMax());
                     }
                 }
             }
             if(paramHasToRemove){
                 getParameterGroup().remove(parametersNames[i]);
+                storedFloatParameters.erase(parametersNames[i]);
+                storedIntParameters.erase(parametersNames[i]);
+                storedVecFloatParameters.erase(parametersNames[i]);
+                storedBoolParameters.erase(parametersNames[i]);
+                storedVoidParameters.erase(parametersNames[i]);
             }
         }
-        parameterGroupChanged.notify();
         for(int i = 0; i < toCreateParameters.size(); i++){
             auto &param = toCreateParameters.get(i);
             if(!getParameterGroup().contains(param.getName())){
-                addParameter(param);
-                if(param.type() == typeid(ofParameter<void>).name()){
+                if(param.valueType() == typeid(float).name()){
+                    storedFloatParameters[param.getName()] = ofParameter<float>();
+                    addParameter(storedFloatParameters[param.getName()].set(param.getName(), param.cast<float>().get(), param.cast<float>().getMin(), param.cast<float>().getMax()));
+                }
+                else if(param.valueType() == typeid(int).name()){
+                    storedIntParameters[param.getName()] = ofParameter<int>();
+                    addParameter(storedIntParameters[param.getName()].set(param.getName(), param.cast<int>().get(), param.cast<int>().getMin(), param.cast<int>().getMax()));
+                }
+                else if(param.valueType() == typeid(vector<float>).name()){
+                    storedVecFloatParameters[param.getName()] = ofParameter<vector<float>>();
+                    addParameter(storedVecFloatParameters[param.getName()].set(param.getName(), param.cast<vector<float>>().get(), param.cast<vector<float>>().getMin(), param.cast<vector<float>>().getMax()));
+                }
+                else if(param.valueType() == typeid(bool).name()){
+                    storedBoolParameters[param.getName()] = ofParameter<bool>();
+                    addParameter(storedBoolParameters[param.getName()].set(param.getName(), param.cast<bool>().get()));
+                }
+                else if(param.valueType() == typeid(void).name()){
+                    storedVoidParameters[param.getName()] = ofParameter<void>();
                     string paramName = param.getName();
-                    listeners.push(param.cast<void>().newListener([this, paramName](){
+                    listeners.push(storedVoidParameters[param.getName()].newListener([this, paramName](){
                         lastChangedParameterName = paramName;
                         try{
                             listenerFunc();
@@ -114,6 +136,7 @@ public:
                             ofLog() << e.what();
                         }
                     }));
+                    addParameter(storedVoidParameters[param.getName()].set(paramName));
                 }
             }
         }
@@ -122,45 +145,57 @@ public:
     
     //Getters
     float getFloatParameter(string name){
-        return getParameterGroup().get(name).cast<float>().get();
+        if(getParameterGroup().contains(name))
+            return getParameter<float>(name).get();
+        
+        return 0;
     }
     
     int getIntParameter(string name){
-        return getParameterGroup().get(name).cast<int>().get();
+        if(getParameterGroup().contains(name))
+            return getParameter<int>(name).get();
+        
+        return 0;
     }
     
     bool getBoolParameter(string name){
-        return getParameterGroup().get(name).cast<bool>().get();
+        if(getParameterGroup().contains(name))
+            return getParameter<bool>(name).get();
+        
+        return false;
     }
     
     vector<float> getVectorFloatParameter(string name){
-        return getParameterGroup().get(name).cast<vector<float>>().get();
+        if(getParameterGroup().contains(name))
+            return getParameter<vector<float>>(name);
+        
+        return {0};
     }
     
     //Setters
     void setFloatParameter(string name, float val){
         if(getParameterGroup().contains(name))
-            getParameterGroup().get(name).cast<float>().set(val);
+            getParameter<float>(name).set(val);
     }
     
     void setIntParameter(string name, int val){
         if(getParameterGroup().contains(name))
-            getParameterGroup().get(name).cast<int>().set(val);
+            getParameter<int>(name).set(val);
     }
     
     void setBoolParameter(string name, bool val){
         if(getParameterGroup().contains(name))
-            getParameterGroup().get(name).cast<bool>().set(val);
+            getParameter<bool>(name).set(val);
     }
     
     void setVoidParameter(string name){
         if(getParameterGroup().contains(name))
-            getParameterGroup().get(name).cast<void>().trigger();
+            getParameter<void>(name).trigger();
     }
     
     void setVectorFloatParameter(string name, vector<float> val){
         if(getParameterGroup().contains(name))
-            getParameterGroup().get(name).cast<vector<float>>().set(val);
+            getParameter<vector<float>>(name).set(val);
     }
     
     string getLastChangedParameterName(){
@@ -185,6 +220,11 @@ private:
     string fileDialogFilename;
     
     ofParameterGroup toCreateParameters;
+    map<string, ofParameter<float>> storedFloatParameters;
+    map<string, ofParameter<int>> storedIntParameters;
+    map<string, ofParameter<vector<float>>> storedVecFloatParameters;
+    map<string, ofParameter<bool>> storedBoolParameters;
+    map<string, ofParameter<void>> storedVoidParameters;
     
     ofEventListeners listeners;
 };

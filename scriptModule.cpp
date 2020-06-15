@@ -76,6 +76,7 @@ void scriptModule::loadFile(){
     }catch (std::exception &e){
         ofLog() << e.what();
     }
+    updateParameters();
     try{
         listenerFunc = chai.eval<std::function<bool()>>("listenerFunc");
     }catch (std::exception &e){
@@ -86,8 +87,6 @@ void scriptModule::loadFile(){
     }catch (std::exception &e){
         ofLog() << e.what();
     }
-    updateParameters();
-    ofNotifyEvent(parameterGroupChanged);
 }
 
 void scriptModule::parametersListener(ofAbstractParameter &param){
@@ -118,6 +117,7 @@ void scriptModule::loadBeforeConnections(ofJson &json){
     ofDeserialize(json, filename);
     if(filename.get() != oldFile){
         loadFile();
+        fileLastChanged = std::filesystem::last_write_time(ofToDataPath("Scripts/" + filename.get()));
     }
 };
 
