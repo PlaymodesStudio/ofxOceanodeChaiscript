@@ -1,0 +1,12 @@
+this.addFloatParameter("Input", 0, 0, 1);
+this.addFloatParameter("Output", 1, 0, 1);
+
+def listenerFunc()
+{
+    if(this.getLastChangedParameterName() == "Input")
+    {
+      var v = this.getFloatParameter("Input");
+      this.setFloatParameter("Output", 1-v);
+    }
+    return true;
+}
