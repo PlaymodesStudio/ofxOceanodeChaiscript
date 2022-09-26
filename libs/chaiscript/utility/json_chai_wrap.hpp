@@ -1,7 +1,7 @@
 #ifndef CHAISCRIPT_SIMPLEJSON_WRAP_HPP
 #define CHAISCRIPT_SIMPLEJSON_WRAP_HPP
 
-#include "json.hpp"
+#include "json_chai.hpp"
 
 namespace chaiscript
 {

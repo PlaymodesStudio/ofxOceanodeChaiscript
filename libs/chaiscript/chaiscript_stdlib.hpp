@@ -25,7 +25,7 @@
 //#include "dispatchkit/boxed_value.hpp"
 #include "language/chaiscript_prelude.hpp"
 #include "dispatchkit/register_function.hpp"
-#include "utility/json_wrap.hpp"
+#include "utility/json_chai_wrap.hpp"
 
 #ifndef CHAISCRIPT_NO_THREADS
 #include <future>
