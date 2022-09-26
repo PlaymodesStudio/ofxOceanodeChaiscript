@@ -207,7 +207,7 @@ private:
     void loadFile();
     
     ofParameter<string> filename;
-    std::time_t fileLastChanged;
+    std::filesystem::file_time_type fileLastChanged;
     
     chaiscript::ChaiScript chai;
     chaiscript::ChaiScript::State chaiInitState;
