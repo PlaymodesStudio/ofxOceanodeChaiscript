@@ -39,7 +39,7 @@ namespace chaiscript {
   class Boxed_Number;
   struct AST_Node;
 
-  using AST_NodePtr = std::unique_ptr<AST_Node>;
+//  using AST_NodePtr = std::unique_ptr<AST_Node>;
 
   namespace dispatch {
     template<typename FunctionType>
@@ -396,7 +396,7 @@ namespace chaiscript {
     public:
       Dynamic_Proxy_Function_Impl(Callable t_f,
                                   int t_arity = -1,
-                                  std::shared_ptr<AST_Node> t_parsenode = AST_NodePtr,
+                                  std::shared_ptr<AST_Node> t_parsenode = nullptr,
                                   Param_Types t_param_types = Param_Types(),
                                   Proxy_Function t_guard = Proxy_Function())
           : Dynamic_Proxy_Function(t_arity, std::move(t_parsenode), std::move(t_param_types), std::move(t_guard))
