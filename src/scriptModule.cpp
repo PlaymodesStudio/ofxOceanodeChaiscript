@@ -42,7 +42,6 @@ scriptModule::scriptModule() : ofxOceanodeNodeModel("Chai Scripting"){
     chai.add(chaiscript::fun(&scriptModule::getLastChangedParameterName), "getLastChangedParameterName");
     
     chai.add(chaiscript::user_type<scriptModule>(), "scriptModule");
-    chai.add(chaiscript::bootstrap::standard_library::vector_type<vector<float>>("FloatVector"));
     chai.add(chaiscript::extras::math::bootstrap());
     chai.add(chaiscript::type_conversion<std::vector<chaiscript::Boxed_Value>, std::vector<float>>(
         [&](const std::vector<chaiscript::Boxed_Value> &t_bvs) {
