@@ -1129,7 +1129,7 @@ namespace chaiscript {
 
             vec.reserve(vec.size() + 1); // tightly control vec growth
             vec.push_back(t_f);
-            std::stable_sort(vec.begin(), vec.end(), &function_less_than);
+//            std::stable_sort(vec.begin(), vec.end(), &function_less_than);
             itr->second = std::make_shared<std::vector<Proxy_Function>>(vec);
             return std::make_shared<Dispatch_Function>(std::move(vec));
           } else if (t_f->has_arithmetic_param()) {
